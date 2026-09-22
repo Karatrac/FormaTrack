@@ -7,10 +7,12 @@ import org.classes.enums.Statut;
 import org.classes.exception.ElementIntrouvableException;
 import org.classes.exception.InscriptionDupliqueeException;
 import org.classes.exception.SessionCompletteException;
+import org.classes.exception.SessionPasseeException;
 import org.classes.repository.InscriptionRepository;
 import org.classes.repository.SessionRepository;
 import org.classes.repository.UtilisateurRepository;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,13 +21,22 @@ public class InscriptionService {
     private final InscriptionRepository inscriptionRepository;
     private final SessionRepository sessionRepository;
     private final UtilisateurRepository utilisateurRepository;
+    private final Clock horloge;
 
     public InscriptionService(InscriptionRepository inscriptionRepository,
                               SessionRepository sessionRepository,
                               UtilisateurRepository utilisateurRepository) {
+        this(inscriptionRepository, sessionRepository, utilisateurRepository, Clock.systemDefaultZone());
+    }
+
+    public InscriptionService(InscriptionRepository inscriptionRepository,
+                              SessionRepository sessionRepository,
+                              UtilisateurRepository utilisateurRepository,
+                              Clock horloge) {
         this.inscriptionRepository = inscriptionRepository;
         this.sessionRepository = sessionRepository;
         this.utilisateurRepository = utilisateurRepository;
+        this.horloge = horloge;
     }
 
     public Inscription inscrire(Long utilisateurId, Long sessionId) {
@@ -35,6 +46,11 @@ public class InscriptionService {
         Utilisateur utilisateur = utilisateurRepository.findById(utilisateurId)
                 .orElseThrow(() -> new ElementIntrouvableException(
                         "Utilisateur introuvable avec l'id " + utilisateurId));
+
+        if (session.dateFin() != null && session.dateFin().isBefore(LocalDateTime.now(horloge))) {
+            throw new SessionPasseeException(
+                    "La session " + session.id() + " est terminée depuis le " + session.dateFin());
+        }
 
         if (inscriptionRepository.existsBySessionIdAndUtilisateurId(session.id(), utilisateur.id())) {
             throw new InscriptionDupliqueeException(
