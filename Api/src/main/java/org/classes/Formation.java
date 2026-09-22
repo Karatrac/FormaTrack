@@ -69,4 +69,23 @@ public class Formation {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Formation that = (Formation) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Formation{id=" + id + ", titre='" + titre + "', dureeHeures=" + dureeHeures
+                + ", niveau=" + niveau + ", active=" + active + "}";
+    }
 }

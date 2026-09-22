@@ -69,4 +69,25 @@ public class Session {
     public void setCapacite(int capacite) {
         this.capacite = capacite;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session that = (Session) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Session{id=" + id
+                + ", formation=" + (formation != null ? formation.getTitre() : null)
+                + ", dateDebut=" + dateDebut + ", dateFin=" + dateFin
+                + ", lieu='" + lieu + "', capacite=" + capacite + "}";
+    }
 }

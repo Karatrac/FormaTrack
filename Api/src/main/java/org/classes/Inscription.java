@@ -76,4 +76,12 @@ public class Inscription {
     public int hashCode() {
         return Objects.hash(session, utilisateur);
     }
+
+    @Override
+    public String toString() {
+        return "Inscription{id=" + id
+                + ", sessionId=" + (session != null ? session.getId() : null)
+                + ", utilisateur=" + (utilisateur != null ? utilisateur.getEmail() : null)
+                + ", statut=" + statut + ", dateInscription=" + dateInscription + "}";
+    }
 }
